@@ -4,6 +4,37 @@ import { hash, compare } from "bcrypt";
 import { createToken } from "../utils/token.js";
 import { COOKIE_NAME } from "../utils/constants.js";
 
+const isProd = process.env.NODE_ENV === "production";
+
+export function setCookie(
+  res: Response,
+  name: string,
+  token: string,
+  days = 7
+) {
+  const expires = new Date();
+  expires.setDate(expires.getDate() + days);
+
+  res.cookie(name, token, {
+    path: "/",
+    httpOnly: true,
+    signed: true,
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax",
+    expires,
+  });
+}
+
+export function clearCookie(res: Response, name: string) {
+  res.clearCookie(name, {
+    path: "/",
+    httpOnly: true,
+    signed: true,
+    secure: isProd,
+    sameSite: isProd ? "none" : "lax",
+  });
+}
+
 export const getAllUsers = async (req: Request, res: Response) => {
   try {
     const users = await User.find();
@@ -34,30 +65,13 @@ export const userSignUp = async (req: Request, res: Response) => {
 
     await newUser.save();
 
-    res.clearCookie(COOKIE_NAME, {
-      httpOnly: true,
-      domain: "localhost",
-      signed: true,
-      path: "/",
-    });
-
     const token = createToken({
       id: newUser._id.toString(),
       email: newUser.email,
     });
 
-    const expires = new Date();
-
-    expires.setDate(expires.getDate() + 7);
-
-    res.cookie(COOKIE_NAME, token, {
-      path: "/",
-      expires,
-      httpOnly: true,
-      signed: true,
-      secure: true,
-      sameSite: "none",
-    });
+    res.clearCookie(COOKIE_NAME);
+    setCookie(res, COOKIE_NAME, token, 7);
 
     return res
       .status(201)
@@ -83,27 +97,10 @@ export const userSignIn = async (req: Request, res: Response) => {
       return res.status(403).send("Incorrect password");
     }
 
-    res.clearCookie(COOKIE_NAME, {
-      httpOnly: true,
-      domain: "localhost",
-      signed: true,
-      path: "/",
-    });
-
     const token = createToken({ id: user._id.toString(), email: user.email });
 
-    const expires = new Date();
-
-    expires.setDate(expires.getDate() + 7);
-
-    res.cookie(COOKIE_NAME, token, {
-      path: "/",
-      expires,
-      httpOnly: true,
-      signed: true,
-      secure: true,
-      sameSite: "none",
-    });
+    res.clearCookie(COOKIE_NAME);
+    setCookie(res, COOKIE_NAME, token, 7);
 
     return res
       .status(201)
@@ -145,12 +142,7 @@ export async function userLogout(req: Request, res: Response) {
       return res.status(401).send("Permission denied");
     }
 
-    res.clearCookie(COOKIE_NAME, {
-      httpOnly: true,
-      domain: "localhost",
-      signed: true,
-      path: "/",
-    });
+    clearCookie(res, COOKIE_NAME);
 
     return res.status(201).json({ message: "OK" });
   } catch (error) {
