@@ -14,6 +14,8 @@ app.use(
   })
 );
 
+app.options("*", cors());
+
 app.use(express.json());
 
 app.use(cookieParser(process.env.COOKIE_SECRET));

@@ -15,10 +15,12 @@ export function setCookie(
   const expires = new Date();
   expires.setDate(expires.getDate() + days);
 
+  if (isProd) {
+    console.log("Production Ready!");
+  }
+
   res.cookie(name, token, {
-    path: "/",
     httpOnly: true,
-    signed: true,
     secure: isProd,
     sameSite: isProd ? "none" : "lax",
     expires,
@@ -27,9 +29,7 @@ export function setCookie(
 
 export function clearCookie(res: Response, name: string) {
   res.clearCookie(name, {
-    path: "/",
     httpOnly: true,
-    signed: true,
     secure: isProd,
     sameSite: isProd ? "none" : "lax",
   });
