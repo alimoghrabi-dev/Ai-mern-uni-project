@@ -28,6 +28,7 @@ const Chat = () => {
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
+  const [isFetchingChats, setIsFetchingChats] = useState<boolean>(false);
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [isSending, setIsSending] = useState<boolean>(false);
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
@@ -82,13 +83,16 @@ const Chat = () => {
   useLayoutEffect(() => {
     if (auth?.isLoggedIn && auth?.user) {
       toast.loading("Fetching Chats...", { id: "chats" });
+      setIsFetchingChats(true);
       getUserChats()
         .then((data) => {
           setChatMessages([...data.chats]);
+          setIsFetchingChats(false);
           toast.success("Fetched Chats Successfully!", { id: "chats" });
         })
         .catch((error) => {
           console.log(error);
+          setIsFetchingChats(false);
           toast.error("Something went wrong! Refresh Page.", { id: "chats" });
         });
     }
@@ -185,12 +189,26 @@ const Chat = () => {
               chatMessages={chatMessages}
             />
           ))}
+          {isSending && (
+            <div className="w-fit px-2.5 pr-4 flex items-center gap-3.5 bg-gray-400/25 py-3 animate-pulse rounded-2xl">
+              <img
+                src="openai.png"
+                alt="logo"
+                className="w-[30px] h-[30px] p-1 bg-gray-50 rounded-full"
+              />
+              <div className="flex items-center gap-1.5">
+                <span className="size-1.5 rounded-full bg-gray-400 animate-bounce [animation-delay:-0.2s]"></span>
+                <span className="size-1.5 rounded-full bg-gray-400 animate-bounce [animation-delay:-0.15s]"></span>
+                <span className="size-1.5 rounded-full bg-gray-400 animate-bounce"></span>
+              </div>
+            </div>
+          )}
         </div>
         <div className="fixed bottom-0 border-t border-gray-600/[0.35] w-full flex items-center justify-start py-5 px-4 sm:px-8 md:px-12 bg-accent custom-shadow">
           <div className="flex w-full lg:w-[75%] xl:w-[79%] h-[50px]">
             <Input
               ref={inputRef}
-              disabled={isSending}
+              disabled={isSending || isFetchingChats}
               onKeyDown={(key) => {
                 if (key.code === "Enter") {
                   handleSubmit();
@@ -212,10 +230,10 @@ const Chat = () => {
               <Button
                 onClick={handleSubmit}
                 type="button"
-                disabled={isSending}
+                disabled={isSending || isFetchingChats}
                 size={"sm"}
               >
-                {isSending ? (
+                {isSending || isFetchingChats ? (
                   <Loader2 className="size-5 animate-spin text-gray-50" />
                 ) : (
                   <IoSend className="text-gray-50 h-5 w-5 cursor-pointer" />

@@ -1,13 +1,12 @@
 import { NextFunction, Request, Response } from "express";
+import { InferenceClient } from "@huggingface/inference";
 import User from "../models/user.model.js";
-import OpenAI from "openai";
 import dotenv from "dotenv";
 dotenv.config();
 
-const openai = new OpenAI({
-  baseURL: "https://api.deepseek.com",
-  apiKey: process.env.DEEPSEEK_API_KEY,
-});
+function removeThink(text: string) {
+  return text.replace(/<think>[\s\S]*?<\/think>/g, "").trim();
+}
 
 export const generateChatCompletion = async (
   req: Request,
@@ -31,16 +30,25 @@ export const generateChatCompletion = async (
     // @ts-ignore
     user.chats.push({ content: message, role: "user" });
 
-    const completion = await openai.chat.completions.create({
-      messages: [{ role: "system", content: message }],
-      model: "deepseek-chat",
+    const client = new InferenceClient(process.env.HF_TOKEN);
+
+    const chatCompletion = await client.chatCompletion({
+      model: "deepseek-ai/DeepSeek-R1:novita",
+      messages: [
+        {
+          role: "user",
+          content: message,
+        },
+      ],
     });
 
-    const assistantMessage = completion.choices[0].message.content;
+    const assistantMessage = chatCompletion.choices[0].message.content;
 
-    if (assistantMessage) {
+    const cleanedText = removeThink(assistantMessage);
+
+    if (cleanedText) {
       // @ts-ignore
-      user.chats.push({ role: "assistant", content: assistantMessage });
+      user.chats.push({ role: "assistant", content: cleanedText });
     }
 
     await user.save();
