@@ -23,7 +23,6 @@ export function setCookie(
     path: "/",
     httpOnly: true,
     secure: isProd,
-    signed: true,
     sameSite: "none",
     expires,
   });

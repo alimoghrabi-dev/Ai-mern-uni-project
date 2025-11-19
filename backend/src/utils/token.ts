@@ -23,7 +23,9 @@ export const verifyToken = async (
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.signedCookies[`${COOKIE_NAME}`];
+  const token = req.cookies[COOKIE_NAME];
+
+  console.log(token);
 
   if (!token || token.trim() === "") {
     return res.status(401).send("Unauthorized");

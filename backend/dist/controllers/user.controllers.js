@@ -13,7 +13,6 @@ export function setCookie(res, name, token, days = 7) {
         path: "/",
         httpOnly: true,
         secure: isProd,
-        signed: true,
         sameSite: "none",
         expires,
     });
@@ -21,9 +20,7 @@ export function setCookie(res, name, token, days = 7) {
 export function clearCookie(res, name) {
     res.clearCookie(name, {
         path: "/",
-        httpOnly: true,
-        secure: isProd,
-        signed: true,
+        secure: true,
         sameSite: "none",
     });
 }
