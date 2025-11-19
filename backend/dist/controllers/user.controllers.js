@@ -2,6 +2,31 @@ import User from "../models/user.model.js";
 import { hash, compare } from "bcrypt";
 import { createToken } from "../utils/token.js";
 import { COOKIE_NAME } from "../utils/constants.js";
+const isProd = process.env.NODE_ENV === "production";
+export function setCookie(res, name, token, days = 7) {
+    const expires = new Date();
+    expires.setDate(expires.getDate() + days);
+    if (isProd) {
+        console.log("Production Ready!");
+    }
+    res.cookie(name, token, {
+        path: "/",
+        httpOnly: true,
+        secure: isProd,
+        signed: true,
+        sameSite: isProd ? "none" : "lax",
+        expires,
+    });
+}
+export function clearCookie(res, name) {
+    res.clearCookie(name, {
+        path: "/",
+        httpOnly: true,
+        secure: isProd,
+        signed: true,
+        sameSite: isProd ? "none" : "lax",
+    });
+}
 export const getAllUsers = async (req, res) => {
     try {
         const users = await User.find();
@@ -25,25 +50,12 @@ export const userSignUp = async (req, res) => {
             password: hashedPassword,
         });
         await newUser.save();
-        res.clearCookie(COOKIE_NAME, {
-            httpOnly: true,
-            domain: "localhost",
-            signed: true,
-            path: "/",
-        });
         const token = createToken({
             id: newUser._id.toString(),
             email: newUser.email,
         });
-        const expires = new Date();
-        expires.setDate(expires.getDate() + 7);
-        res.cookie(COOKIE_NAME, token, {
-            path: "/",
-            domain: "localhost",
-            expires,
-            httpOnly: true,
-            signed: true,
-        });
+        res.clearCookie(COOKIE_NAME);
+        setCookie(res, COOKIE_NAME, token, 7);
         return res
             .status(201)
             .json({ message: "OK", name: newUser.name, email: newUser.email });
@@ -63,22 +75,9 @@ export const userSignIn = async (req, res) => {
         if (!isPasswordCorrect) {
             return res.status(403).send("Incorrect password");
         }
-        res.clearCookie(COOKIE_NAME, {
-            httpOnly: true,
-            domain: "localhost",
-            signed: true,
-            path: "/",
-        });
         const token = createToken({ id: user._id.toString(), email: user.email });
-        const expires = new Date();
-        expires.setDate(expires.getDate() + 7);
-        res.cookie(COOKIE_NAME, token, {
-            path: "/",
-            domain: "localhost",
-            expires,
-            httpOnly: true,
-            signed: true,
-        });
+        res.clearCookie(COOKIE_NAME);
+        setCookie(res, COOKIE_NAME, token, 7);
         return res
             .status(201)
             .json({ message: "OK", name: user.name, email: user.email });
@@ -113,12 +112,7 @@ export async function userLogout(req, res) {
         if (user._id.toString() !== res.locals.jwtData.id) {
             return res.status(401).send("Permission denied");
         }
-        res.clearCookie(COOKIE_NAME, {
-            httpOnly: true,
-            domain: "localhost",
-            signed: true,
-            path: "/",
-        });
+        clearCookie(res, COOKIE_NAME);
         return res.status(201).json({ message: "OK" });
     }
     catch (error) {

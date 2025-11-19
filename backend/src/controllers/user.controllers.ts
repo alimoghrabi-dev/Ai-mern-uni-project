@@ -20,8 +20,10 @@ export function setCookie(
   }
 
   res.cookie(name, token, {
+    path: "/",
     httpOnly: true,
     secure: isProd,
+    signed: true,
     sameSite: isProd ? "none" : "lax",
     expires,
   });
@@ -29,8 +31,10 @@ export function setCookie(
 
 export function clearCookie(res: Response, name: string) {
   res.clearCookie(name, {
+    path: "/",
     httpOnly: true,
     secure: isProd,
+    signed: true,
     sameSite: isProd ? "none" : "lax",
   });
 }
