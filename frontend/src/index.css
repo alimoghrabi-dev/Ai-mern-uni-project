@@ -33,7 +33,7 @@ body {
 }
 
 .custom-shadow-2 {
-  box-shadow: 0 0 32px rgba(37, 99, 235, 0.95);
+  box-shadow: 0 0 42px rgba(37, 99, 235, 0.25);
 }
 
 @layer base {

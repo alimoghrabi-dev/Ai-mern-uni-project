@@ -14,7 +14,7 @@ export function setCookie(res, name, token, days = 7) {
         httpOnly: true,
         secure: isProd,
         signed: true,
-        sameSite: isProd ? "none" : "lax",
+        sameSite: "none",
         expires,
     });
 }
@@ -24,7 +24,7 @@ export function clearCookie(res, name) {
         httpOnly: true,
         secure: isProd,
         signed: true,
-        sameSite: isProd ? "none" : "lax",
+        sameSite: "none",
     });
 }
 export const getAllUsers = async (req, res) => {

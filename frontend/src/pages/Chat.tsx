@@ -29,6 +29,7 @@ const Chat = () => {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [isFetchingChats, setIsFetchingChats] = useState<boolean>(false);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [isSending, setIsSending] = useState<boolean>(false);
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
@@ -66,6 +67,7 @@ const Chat = () => {
 
   const handleDeleteAllChats = async () => {
     try {
+      setIsDeleting(true);
       toast.loading("Deleting Chats...", { id: "delete-chats" });
 
       await deleteUserChats();
@@ -77,6 +79,8 @@ const Chat = () => {
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong! Try again.", { id: "delete-chats" });
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -108,20 +112,32 @@ const Chat = () => {
     <section className="w-full flex">
       <div className="h-[calc(100vh-65px)] fixed z-50 lg:w-[22%] xl:w-[19%] bg-accent border-r border-gray-500/[0.3] hidden lg:flex py-3 items-center">
         <div className="w-full h-full flex flex-col items-center justify-between gap-3">
-          <div className="w-[94%] flex items-center justify-between cursor-pointer hover:bg-gray-500/25 transition-all py-2.5 rounded-lg px-2.5">
-            <span
-              onClick={handleDeleteAllChats}
-              className="flex items-center gap-1.5"
-            >
+          <button
+            disabled={
+              isFetchingChats ||
+              isSending ||
+              chatMessages.length === 0 ||
+              isDeleting
+            }
+            onClick={handleDeleteAllChats}
+            className="w-[94%] flex items-center justify-between cursor-pointer hover:bg-gray-500/25 transition-all py-2.5 rounded-lg px-2.5 disabled:opacity-75 disabled:pointer-events-none disabled:cursor-default disabled:animate-pulse disabled:bg-gray-500/15"
+          >
+            <span className="flex items-center gap-1.5">
               <img
                 src="openai.png"
                 alt="logo"
                 className="p-[3px] bg-gray-50 rounded-full w-[26px] h-[26px]"
               />
-              <p className="text-white text-sm font-medium">Clear Chat</p>
+              {isDeleting ? (
+                <p className="text-white text-sm font-medium">
+                  Deleting chats...
+                </p>
+              ) : (
+                <p className="text-white text-sm font-medium">Clear Chat</p>
+              )}
             </span>
             <TbClearAll className="text-white h-5 w-5" />
-          </div>
+          </button>
 
           <div className="flex-1 w-full overflow-y-scroll flex flex-col items-start space-y-3 pl-2.5 pr-1.5 py-3 border-y border-gray-500/25">
             {chatMessages.length === 0 && (
@@ -135,7 +151,7 @@ const Chat = () => {
             {chatMessages.map((message, index) =>
               message.role === "user" ? (
                 <a
-                  key={message.role}
+                  key={index}
                   href={`#${index}`}
                   className="flex items-center py-2.5 bg-gray-800 px-2.5 rounded-md cursor-pointer hover:bg-gray-700 transition-all"
                 >

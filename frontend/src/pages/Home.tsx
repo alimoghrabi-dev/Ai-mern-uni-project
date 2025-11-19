@@ -2,9 +2,9 @@ import TypingAnime from "@/components/home/TypingAnime";
 
 const Home = () => {
   return (
-    <section className="w-full flex flex-col items-center justify-center mt-16 space-y-12 pb-12 overflow-hidden">
+    <section className="w-full flex flex-col items-center justify-center mt-16 space-y-12 pb-12 overflow-hidden px-4">
       <TypingAnime />
-      <div className="flex flex-col items-center justify-center gap-y-28">
+      <div className="flex flex-col items-center justify-center gap-y-28 px-6">
         <div className="flex items-center gap-[180px] sm:gap-[300px] md:gap-[375px]">
           <img
             src="robot.png"
@@ -20,7 +20,7 @@ const Home = () => {
         <img
           src="chat.png"
           alt="chat"
-          className="max-w-[440px] sm:max-w-[550px] md:max-w-2xl lg:max-w-4xl xl:max-w-6xl rounded-3xl custom-shadow-2 p-2 sm:p-1"
+          className="max-w-full rounded-3xl custom-shadow-2 p-2 sm:p-1"
         />
       </div>
       <div className="w-[80%] flex flex-col items-center justify-center gap-2 font-sans pt-10 border-t border-gray-700/50">
@@ -30,7 +30,8 @@ const Home = () => {
         <a
           href="https://github.com/alimoghrabi-dev"
           target="_blank"
-          className="text-primary text-lg font-semibold hover:underline hover:text-primary/90 transition-all cursor-pointer">
+          className="text-primary text-center text-lg font-semibold hover:underline hover:text-primary/90 transition-all cursor-pointer"
+        >
           Check My GitHub For More Cool Projects
         </a>
       </div>

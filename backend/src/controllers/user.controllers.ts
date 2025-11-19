@@ -24,7 +24,7 @@ export function setCookie(
     httpOnly: true,
     secure: isProd,
     signed: true,
-    sameSite: isProd ? "none" : "lax",
+    sameSite: "none",
     expires,
   });
 }
@@ -32,10 +32,8 @@ export function setCookie(
 export function clearCookie(res: Response, name: string) {
   res.clearCookie(name, {
     path: "/",
-    httpOnly: true,
-    secure: isProd,
-    signed: true,
-    sameSite: isProd ? "none" : "lax",
+    secure: true,
+    sameSite: "none",
   });
 }
 
