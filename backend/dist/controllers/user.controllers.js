@@ -2,7 +2,7 @@ import User from "../models/user.model.js";
 import { hash, compare } from "bcrypt";
 import { createToken } from "../utils/token.js";
 import { COOKIE_NAME } from "../utils/constants.js";
-const isProd = process.env.NODE_ENV === "production";
+const isProd = process.env.NODE_ENV === "production" ? true : false;
 export function setCookie(res, name, token, days = 7) {
     const expires = new Date();
     expires.setDate(expires.getDate() + days);
@@ -13,7 +13,7 @@ export function setCookie(res, name, token, days = 7) {
         path: "/",
         httpOnly: true,
         secure: isProd,
-        sameSite: "none",
+        sameSite: isProd ? "none" : "lax",
         expires,
     });
 }

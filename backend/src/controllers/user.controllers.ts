@@ -4,7 +4,7 @@ import { hash, compare } from "bcrypt";
 import { createToken } from "../utils/token.js";
 import { COOKIE_NAME } from "../utils/constants.js";
 
-const isProd = process.env.NODE_ENV === "production";
+const isProd = process.env.NODE_ENV === "production" ? true : false;
 
 export function setCookie(
   res: Response,
@@ -23,7 +23,7 @@ export function setCookie(
     path: "/",
     httpOnly: true,
     secure: isProd,
-    sameSite: "none",
+    sameSite: isProd ? "none" : "lax",
     expires,
   });
 }

@@ -24,16 +24,21 @@ const Signin: React.FC = () => {
     const password = formData.get("password") as string;
 
     try {
-      toast.loading("Signing in...", { id: "signin" });
-
       await auth?.login(email, password);
 
       toast.success("Signed in Successfully!", { id: "signin" });
 
       navigate("/");
     } catch (error) {
-      console.log(error);
-      toast.error("Something went wrong!", { id: "signin" });
+      if (error instanceof Error) {
+        //@ts-ignore
+        toast.error(error.response.data, { id: "signin" });
+      } else {
+        toast.error("Something went wrong!", {
+          id: "signin",
+        });
+      }
+
       navigate("/signin");
     } finally {
       setIsLoading(false);
@@ -58,7 +63,7 @@ const Signin: React.FC = () => {
       className="px-0 lg:px-16 pr-0 md:pr-24"
     >
       <Box padding={8} display={{ md: "flex", sm: "none", xs: "none" }}>
-        <img src="airobot.png" alt="robot" className="w-[315px]" />
+        <img src="robot.png" alt="robot" className="w-[515px]" />
       </Box>
       <Box
         display={"flex"}
@@ -84,7 +89,7 @@ const Signin: React.FC = () => {
               padding={2}
               fontWeight={600}
             >
-              Sign In
+              Welcome Back!
             </Typography>
             <div className="w-[350px] sm:w-[500px] md:w-[400px] flex flex-col gap-5">
               <TextField

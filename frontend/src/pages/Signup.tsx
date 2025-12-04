@@ -25,18 +25,20 @@ const Signup: React.FC = () => {
     const password = formData.get("password") as string;
 
     try {
-      toast.loading("Creating account...", { id: "signup" });
-
       await auth?.signup(name, email, password);
 
       toast.success("Account created Successfully!", { id: "signup" });
 
       navigate("/");
     } catch (error) {
-      console.log(error);
-      toast.error("Something went wrong or try a better password (+6 chars)!", {
-        id: "signup",
-      });
+      toast.error(
+        //@ts-ignore
+        error.response.data ||
+          "Something went wrong or try a better password (+6 chars)!",
+        {
+          id: "signup",
+        }
+      );
     } finally {
       setIsLoading(false);
       e.currentTarget.reset();
@@ -60,7 +62,7 @@ const Signup: React.FC = () => {
       className="px-0 lg:px-16 pr-0 md:pr-24"
     >
       <Box padding={8} display={{ md: "flex", sm: "none", xs: "none" }}>
-        <img src="airobot.png" alt="robot" className="w-[315px]" />
+        <img src="robot.png" alt="robot" className="w-[515px]" />
       </Box>
       <Box
         display={"flex"}
@@ -86,7 +88,7 @@ const Signup: React.FC = () => {
               padding={2}
               fontWeight={600}
             >
-              Sign Up
+              Join Us
             </Typography>
             <div className="w-[350px] sm:w-[500px] md:w-[400px] flex flex-col gap-5">
               <TextField

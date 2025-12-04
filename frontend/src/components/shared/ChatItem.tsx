@@ -46,10 +46,13 @@ const ChatItem = ({
     <div
       id={index.toString()}
       className={`w-full px-2.5 flex items-start gap-2.5 ${
-        role === "user" ? "bg-gray-800/80" : "bg-gray-400/25"
+        role === "user"
+          ? "bg-gradient-to-br from-[#1f2937]/90 to-[#111827]/60 border border-white/10"
+          : "bg-gradient-to-br from-[#0f172a]/60 to-[#1e293b]/40 border border-primary/20 shadow-[0_0_8px_rgba(0,200,255,0.15)]"
       } py-3 ${
         chatMessages.length === index + 1 ? "rounded-t-2xl" : "rounded-2xl"
-      }`}>
+      }`}
+    >
       {role === "user" ? (
         <span className="w-8 h-8 bg-primary text-gray-50 text-[15px] rounded-full uppercase flex items-center justify-center">
           {getInitials(auth?.user?.name)}
@@ -77,7 +80,8 @@ const ChatItem = ({
                   language="javascript"
                   customStyle={{
                     borderRadius: "12px",
-                  }}>
+                  }}
+                >
                   {block}
                 </SyntaxHighlighter>
               </div>

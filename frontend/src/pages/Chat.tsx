@@ -153,7 +153,7 @@ const Chat = () => {
                 <a
                   key={index}
                   href={`#${index}`}
-                  className="flex items-center py-2.5 bg-gray-800 px-2.5 rounded-md cursor-pointer hover:bg-gray-700 transition-all"
+                  className="flex items-center py-2.5 bg-gray-800 px-4 rounded-md cursor-pointer hover:bg-gray-700 transition-all"
                 >
                   <p className="text-gray-100 text-[15px] font-normal line-clamp-1">
                     {message.content}
