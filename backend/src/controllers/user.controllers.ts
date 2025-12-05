@@ -36,7 +36,7 @@ export function clearCookie(res: Response, name: string) {
   res.clearCookie(name, {
     path: "/",
     secure: true,
-    sameSite: "none",
+    sameSite: "lax",
   });
 }
 
