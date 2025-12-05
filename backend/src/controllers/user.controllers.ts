@@ -19,11 +19,15 @@ export function setCookie(
     console.log("Production Ready!");
   }
 
+  const maxAgeMs = days * 24 * 60 * 60 * 1000;
+
   res.cookie(name, token, {
     path: "/",
     httpOnly: true,
     secure: isProd,
-    sameSite: isProd ? "none" : "lax",
+    sameSite: "lax",
+    maxAge: maxAgeMs,
+    domain: ".mern-ai.xyz",
     expires,
   });
 }
