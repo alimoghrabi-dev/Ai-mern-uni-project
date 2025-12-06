@@ -9,11 +9,14 @@ export function setCookie(res, name, token, days = 7) {
     if (isProd) {
         console.log("Production Ready!");
     }
+    const maxAgeMs = days * 24 * 60 * 60 * 1000;
     res.cookie(name, token, {
         path: "/",
         httpOnly: true,
         secure: isProd,
-        sameSite: isProd ? "none" : "lax",
+        sameSite: "lax",
+        maxAge: maxAgeMs,
+        domain: ".mern-ai.xyz",
         expires,
     });
 }
@@ -21,7 +24,7 @@ export function clearCookie(res, name) {
     res.clearCookie(name, {
         path: "/",
         secure: true,
-        sameSite: "none",
+        sameSite: "lax",
     });
 }
 export const getAllUsers = async (req, res) => {

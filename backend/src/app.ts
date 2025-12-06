@@ -29,14 +29,6 @@ app.use(
   })
 );
 
-app.options(
-  "*",
-  cors({
-    origin: process.env.CLIENT_URL,
-    credentials: true,
-  })
-);
-
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
 app.use((req, res, next) => {
